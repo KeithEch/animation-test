@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Animation test — scroll &amp; transition demos</title>
+  <meta name="description" content="Side-by-side demos of scroll parallax, fade-in and page transitions, with measured performance.">
+  <link rel="stylesheet" href="/shared/base.css">
+  <style>
+    .demo-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.75rem; }
+    .demo-list li { display: grid; grid-template-columns: minmax(9rem, 14rem) 1fr; gap: 0.25rem 1.25rem;
+      padding-block: 0.75rem; border-bottom: 1px solid var(--rule); }
+    .demo-list li > :first-child { font-weight: 600; }
+    .demo-list .soon { color: var(--ink-soft); }
+    @media (max-width: 34rem) { .demo-list li { grid-template-columns: 1fr; } }
+    .meter { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+    .meter button { font: inherit; padding: 0.5rem 0.9rem; border-radius: 999px; border: 1px solid var(--ink);
+      background: transparent; color: var(--ink); cursor: pointer; }
+    .meter button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap"><strong>animation-test</strong><span>Scroll &amp; transition experiments</span></div>
+  </header>
+
+  <main class="wrap">
+    <section class="section">
+      <p class="eyebrow">Index</p>
+      <h1>Scroll animation, compared</h1>
+      <p class="lede">Small, independent demos of three effects — parallax, fade-in, and page
+        transitions — each built a couple of different ways so they can be judged side by side,
+        on a laptop and on a phone.</p>
+      <p>Every demo follows the same rules: only <code>transform</code> and <code>opacity</code> move,
+        every page is complete and readable with no JavaScript at all, and every effect has a
+        reduced-motion version. Details and measured numbers are in the repository README.</p>
+    </section>
+
+    <section class="section" aria-labelledby="meter-h">
+      <h2 id="meter-h">Performance meter</h2>
+      <p>Turn this on, then open any demo. A small panel shows frame rate live and can run the
+        three-pass thermal test. The setting is remembered on this device.</p>
+      <div class="meter">
+        <button type="button" id="hud-toggle" aria-pressed="false" hidden>Meter is off</button>
+        <noscript>JavaScript is off, so the meter can't run. The demos still work.</noscript>
+        <span class="note" id="hud-hint">You can also add <code>?hud</code> to any demo's address.</span>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="demos-h">
+      <h2 id="demos-h">Demos</h2>
+
+      <h3>Control</h3>
+      <ul class="demo-list">
+        <li><a href="/baseline.html">Baseline — no effects</a>
+          <span>The same content the demos use, with no motion. Measure this first: it's what the
+            phone does with zero animation, so every other number is read against it.</span></li>
+      </ul>
+
+      <h3 style="margin-top:2.5rem">1 · Fade-in on enter</h3>
+      <ul class="demo-list"><li><span class="soon">Coming in phase 2</span><span>CSS scroll-driven, and IntersectionObserver.</span></li></ul>
+
+      <h3 style="margin-top:2.5rem">2 · Subtle parallax</h3>
+      <ul class="demo-list"><li><span class="soon">Coming in phase 3</span><span>CSS scroll-driven, hand-written rAF, Motion, GSAP — each at three intensities.</span></li></ul>
+
+      <h3 style="margin-top:2.5rem">3 · Page transitions</h3>
+      <ul class="demo-list"><li><span class="soon">Coming in phase 4</span><span>Crossfade, shared element, scripted fade-out, curtain wipe.</span></li></ul>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="wrap">Static HTML + CSS. No framework, no build step.</div></footer>
+
+  <script>
+    // Meter switch. Without JS the button stays hidden and the ?hud hint still applies.
+    const b = document.getElementById('hud-toggle');
+    const paint = () => {
+      const on = localStorage.getItem('hud') === '1';
+      b.setAttribute('aria-pressed', on);
+      b.textContent = on ? 'Meter is on' : 'Meter is off';
+    };
+    b.hidden = false; paint();
+    b.addEventListener('click', () => {
+      localStorage.setItem('hud', localStorage.getItem('hud') === '1' ? '0' : '1'); paint();
+    });
+  </script>
+</body>
+</html>

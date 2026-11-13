@@ -1,0 +1,10 @@
+{
+  "name": "animation-test",
+  "private": true,
+  "description": "Scroll parallax, fade-in and page-transition demos with measured performance. Static site, no build step.",
+  "engines": { "node": ">=22.12" },
+  "scripts": {
+    "serve": "node tools/serve.mjs",
+    "size": "node tools/size.mjs"
+  }
+}

@@ -1,0 +1,12 @@
+# Netlify deploys the /site folder as-is. There is no build step.
+# Every push to the default branch (main) redeploys automatically once the repo is linked.
+[build]
+  publish = "site"
+  command = ""
+
+# Demo pages change often while testing; make sure phones always get the latest.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    X-Content-Type-Options = "nosniff"

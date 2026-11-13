@@ -1,0 +1,141 @@
+/*
+  Shared base styles for every demo page.
+  No framework. Custom properties only. Nothing in here animates —
+  each demo adds its own motion in its own file, so demos stay independent.
+*/
+
+:root {
+  /* colour */
+  --paper: #f4f1ea;
+  --paper-2: #e9e4d8;
+  --ink: #1d1b18;
+  --ink-soft: #5c574e;
+  --rule: #cfc8b8;
+  --accent: #b5482b;
+  --accent-soft: #e7c3b4;
+
+  /* type */
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-mono: ui-monospace, "Cascadia Mono", Consolas, Menlo, monospace;
+  --step--1: clamp(0.83rem, 0.8rem + 0.15vw, 0.9rem);
+  --step-0: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --step-1: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+  --step-2: clamp(1.6rem, 1.35rem + 1.2vw, 2.25rem);
+  --step-3: clamp(2.2rem, 1.6rem + 3vw, 4rem);
+
+  /* space */
+  --gap: clamp(1rem, 0.8rem + 1vw, 1.75rem);
+  --measure: 38rem;
+  --page: 64rem;
+  --radius: 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #171614;
+    --paper-2: #23211e;
+    --ink: #ece7dc;
+    --ink-soft: #a9a294;
+    --rule: #3a3631;
+    --accent: #e57a59;
+    --accent-soft: #5a3428;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: var(--step-0)/1.6 var(--font-body);
+}
+
+img, svg { display: block; max-width: 100%; }
+
+a { color: var(--accent); text-underline-offset: 0.18em; }
+a:hover { text-decoration-thickness: 2px; }
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0 0 0.5em;
+  text-wrap: balance;
+}
+h1 { font-size: var(--step-3); letter-spacing: -0.01em; }
+h2 { font-size: var(--step-2); }
+h3 { font-size: var(--step-1); }
+
+p { margin: 0 0 1em; max-width: var(--measure); }
+
+code { font-family: var(--font-mono); font-size: 0.9em; }
+
+.wrap {
+  width: min(100% - 2 * var(--gap), var(--page));
+  margin-inline: auto;
+}
+
+.site-header {
+  border-bottom: 1px solid var(--rule);
+  padding-block: 0.9rem;
+  font-size: var(--step--1);
+}
+.site-header .wrap { display: flex; gap: 1rem; align-items: baseline; flex-wrap: wrap; }
+.site-header strong { font-family: var(--font-display); font-size: var(--step-0); }
+.site-header nav { margin-left: auto; display: flex; gap: 1rem; }
+
+.eyebrow {
+  font-size: var(--step--1);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 0.4rem;
+}
+
+.lede { font-size: var(--step-1); color: var(--ink-soft); line-height: 1.45; }
+
+.section { padding-block: clamp(3rem, 2rem + 6vw, 7rem); }
+.section + .section { border-top: 1px solid var(--rule); }
+
+/* A neutral placeholder "image": a tinted block with a label. */
+.plate {
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius);
+  background:
+    radial-gradient(120% 90% at 20% 15%, var(--accent-soft), transparent 60%),
+    var(--paper-2);
+  display: grid;
+  place-items: end start;
+  padding: 1rem;
+  color: var(--ink-soft);
+  font-size: var(--step--1);
+}
+
+.grid-2 {
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+}
+
+.note {
+  border-left: 3px solid var(--accent);
+  padding: 0.6rem 0 0.6rem 1rem;
+  color: var(--ink-soft);
+  font-size: var(--step--1);
+  max-width: var(--measure);
+}
+
+table { border-collapse: collapse; width: 100%; font-size: var(--step--1); }
+th, td { text-align: left; padding: 0.5rem 0.75rem 0.5rem 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-weight: 600; }
+
+.site-footer {
+  border-top: 1px solid var(--rule);
+  padding-block: 2rem 4rem;
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+}
