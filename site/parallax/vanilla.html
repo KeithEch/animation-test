@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Parallax · B · Hand-written rAF · animation-test</title>
+  <link rel="stylesheet" href="/shared/base.css">
+  <link rel="stylesheet" href="/parallax/parallax.css">
+  <script type="module" src="/shared/hud-loader.js" data-tooling></script>
+  <!--APPROACH-->
+  <script src="/parallax/vanilla.js" defer></script>
+  <style>@media (prefers-reduced-motion: no-preference) { .px-layer { will-change: transform; } }</style>
+  <!--/APPROACH-->
+</head>
+<body>
+  <span class="px-hash" id="whisper"></span><span class="px-hash" id="quiet"></span><span class="px-hash" id="noticeable"></span>
+
+  <header class="site-header">
+    <div class="wrap"><strong>Parallax</strong><span><!--LABEL-->B · Hand-written rAF<!--/LABEL--></span>
+      <nav><a href="/">All demos</a></nav></div>
+  </header>
+
+  <main>
+    <!-- Scene 1: hero. bg = soft shapes + outline word, mid = plate, fg = chips -->
+    <section class="px-scene">
+      <div class="px-layer px-bg" style="--f: 1" aria-hidden="true">
+        <div class="blob a"></div><div class="blob b"></div><div class="big-word">Work</div>
+      </div>
+      <div class="wrap hero">
+        <div>
+          <p class="eyebrow">Parallax · <!--LABEL-->B · Hand-written rAF<!--/LABEL--></p>
+          <h1>Subtle depth</h1>
+          <p class="lede">Background drifts slowest, images a little faster, small labels fastest.
+            Text stays put, so it's always easy to read.</p>
+          <div class="px-layer chips" style="--f: -0.5"><span class="chip">Case study</span><span class="chip">2026</span></div>
+        </div>
+        <div class="px-layer" style="--f: 0.5"><div class="plate">Hero plate (mid-ground)</div></div>
+      </div>
+    </section>
+
+    <!-- Notes and controls: no motion in this section -->
+    <section class="section"><div class="wrap">
+      <div class="demo-notes">
+        <!--NOTES-->
+        <dl>
+          <dt>Approach</dt><dd>IntersectionObserver tracks which scenes are on screen. A scroll event schedules one <code>requestAnimationFrame</code> step: one <code>scrollY</code> read, then transform writes. About 60 lines (<code>vanilla.js</code>).</dd>
+          <dt>Runs on</dt><dd>The main thread. Scrolling itself is handled separately by the browser, so if the page is busy the layers can trail your finger by a frame. That shows up as a slight shimmer, mostly on phones.</dd>
+          <dt>JS shipped</dt><dd>~1.5 KB gzip (mostly comments). Idle when not scrolling, offscreen, or in a hidden tab.</dd>
+          <dt>Reduced motion</dt><dd>Never starts: the composition you see at rest. Turning it on mid-visit clears all motion.</dd>
+          <dt>No JavaScript</dt><dd>Same resting composition.</dd>
+        </dl>
+        <!--/NOTES-->
+      </div>
+      <div class="controls px-picker" aria-label="Intensity">
+        <span class="label">Intensity:</span>
+        <a href="#whisper">Whisper · 32px</a><a href="#quiet">Quiet · 64px</a><a href="#noticeable">Noticeable · 128px</a>
+      </div>
+      <p class="note">Intensity = how far the background drifts while a scene crosses the screen. Mid-ground drifts half
+        that, foreground half that in the opposite direction.</p>
+      <table class="px-matrix">
+        <tr><th>Compare</th><th>Whisper</th><th>Quiet</th><th>Noticeable</th></tr>
+        <tr><td>A · CSS scroll-driven</td><td><a href="/parallax/css.html#whisper">open</a></td><td><a href="/parallax/css.html#quiet">open</a></td><td><a href="/parallax/css.html#noticeable">open</a></td></tr>
+        <tr><td>B · Hand-written rAF</td><td><a href="/parallax/vanilla.html#whisper">open</a></td><td><a href="/parallax/vanilla.html#quiet">open</a></td><td><a href="/parallax/vanilla.html#noticeable">open</a></td></tr>
+        <tr><td>C · Motion</td><td><a href="/parallax/motion.html#whisper">open</a></td><td><a href="/parallax/motion.html#quiet">open</a></td><td><a href="/parallax/motion.html#noticeable">open</a></td></tr>
+        <tr><td>D · GSAP + ScrollTrigger</td><td><a href="/parallax/gsap.html#whisper">open</a></td><td><a href="/parallax/gsap.html#quiet">open</a></td><td><a href="/parallax/gsap.html#noticeable">open</a></td></tr>
+      </table>
+    </div></section>
+
+    <!-- Scene 2: feature. bg = panel, mid = plate, fg = overlapping card -->
+    <section class="px-scene">
+      <div class="px-layer px-bg" style="--f: 1" aria-hidden="true"><div class="panel"></div></div>
+      <div class="wrap feature">
+        <div class="stack">
+          <div class="px-layer" style="--f: 0.5"><div class="plate">Feature plate (mid-ground)</div></div>
+          <div class="px-layer card-pos" style="--f: -0.5"><div class="card"><strong>Brief</strong>Foreground card. It overlaps the plate, and the gap between them changes as you scroll.</div></div>
+        </div>
+        <div><h2>Selected work</h2><p>Placeholder copy for a project summary. The text column is normal content:
+          it scrolls at exactly your finger's speed and is the reference the layers move against.</p></div>
+      </div>
+    </section>
+
+    <!-- Scene 3: gallery. bg = shapes, plates alternate mid / fg speeds. The busiest scene. -->
+    <section class="px-scene">
+      <div class="px-layer px-bg" style="--f: 1" aria-hidden="true"><div class="blob a"></div></div>
+      <div class="wrap">
+        <h2>Gallery</h2>
+        <p>The heaviest scene on the page: seven moving layers at once. Measure here.</p>
+        <div class="gallery">
+          <div class="px-layer" style="--f: 0.5"><div class="plate">Mid</div></div>
+          <div class="px-layer" style="--f: -0.5"><div class="plate">Fore</div></div>
+          <div class="px-layer" style="--f: 0.5"><div class="plate">Mid</div></div>
+          <div class="px-layer" style="--f: -0.5"><div class="plate">Fore</div></div>
+          <div class="px-layer" style="--f: 0.5"><div class="plate">Mid</div></div>
+          <div class="px-layer" style="--f: -0.5"><div class="plate">Fore</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 4: quote. bg = giant quote mark, fg = chip -->
+    <section class="px-scene quote">
+      <div class="px-layer px-bg" style="--f: 1" aria-hidden="true"><div class="mark">“</div></div>
+      <div class="wrap">
+        <blockquote>Motion should feel like the page has depth, not like the page is moving.</blockquote>
+        <div class="px-layer chip-pos" style="--f: -0.5"><span class="chip">Design principle</span></div>
+      </div>
+    </section>
+
+    <!-- Scene 5: feature, flipped -->
+    <section class="px-scene">
+      <div class="px-layer px-bg" style="--f: 1" aria-hidden="true"><div class="panel" style="inset: 18% 35% 18% 0"></div></div>
+      <div class="wrap feature flip">
+        <div class="stack">
+          <div class="px-layer" style="--f: 0.5"><div class="plate">Next plate (mid-ground)</div></div>
+          <div class="px-layer card-pos" style="--f: -0.5"><div class="card"><strong>Next project</strong>The end of the page.</div></div>
+        </div>
+        <div><h2>Next project</h2><p>At rest, with reduced motion, or with no support, this page should look
+          composed, not broken. Check that it does.</p><p><a href="/">All demos</a></p></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="wrap">Parallax · <!--LABEL-->B · Hand-written rAF<!--/LABEL--></div></footer>
+</body>
+</html>

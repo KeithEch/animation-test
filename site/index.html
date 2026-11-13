@@ -67,7 +67,18 @@
       </ul>
 
       <h3 style="margin-top:2.5rem">2 · Subtle parallax</h3>
-      <ul class="demo-list"><li><span class="soon">Coming in phase 3</span><span>CSS scroll-driven, hand-written rAF, Motion, GSAP — each at three intensities.</span></li></ul>
+      <p class="note">Each opens at the quietest setting (Whisper). Every page has an intensity picker and a grid
+        linking all four approaches at each intensity.</p>
+      <ul class="demo-list">
+        <li><a href="/parallax/css.html">A · CSS scroll-driven</a>
+          <span>Zero JavaScript. Runs on the browser's own scroll machinery.</span></li>
+        <li><a href="/parallax/vanilla.html">B · Hand-written rAF</a>
+          <span>~60 lines of JavaScript, 1.5 KB. Main thread, and idle when you're not scrolling.</span></li>
+        <li><a href="/parallax/motion.html">C · Motion</a>
+          <span>29.5 KB. Hands the work to the same native machinery as A.</span></li>
+        <li><a href="/parallax/gsap.html">D · GSAP + ScrollTrigger</a>
+          <span>46.3 KB. Everything in JavaScript on the main thread, every frame.</span></li>
+      </ul>
 
       <h3 style="margin-top:2.5rem">3 · Page transitions</h3>
       <ul class="demo-list"><li><span class="soon">Coming in phase 4</span><span>Crossfade, shared element, scripted fade-out, curtain wipe.</span></li></ul>

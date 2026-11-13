@@ -9,7 +9,7 @@ the deliverable. This README explains what each one is, which approach it uses, 
 measured.
 
 - **Live site:** _added once Netlify is connected_
-- **Status:** phase 2 (fade-in demos built; not yet measured on a phone). Demos are added phase by phase. See [Progress](#progress).
+- **Status:** phase 3 (fade-in and parallax demos built; not yet measured on a phone). Demos are added phase by phase. See [Progress](#progress).
 
 ---
 
@@ -126,6 +126,10 @@ Measure with the browser in the foreground. Background or hidden tabs are thrott
 | Baseline | none (control) | — | `site/baseline.html` |
 | Fade A | fade-in on enter | CSS scroll-driven (`view()`) | `site/fade/css.html` |
 | Fade B | fade-in on enter | IntersectionObserver + CSS transition | `site/fade/vanilla.html`, `vanilla.js` |
+| Parallax A | subtle parallax | CSS scroll-driven (named `view-timeline`) | `site/parallax/css.html` |
+| Parallax B | subtle parallax | IntersectionObserver + hand-written rAF step | `site/parallax/vanilla.html`, `vanilla.js` |
+| Parallax C | subtle parallax | Motion `animate()` + `scroll()` | `site/parallax/motion.html`, `motion.js` |
+| Parallax D | subtle parallax | GSAP + ScrollTrigger (`scrub: true`) | `site/parallax/gsap.html`, `gsap.js` |
 
 _More rows are added as each phase lands._
 
@@ -171,6 +175,78 @@ and B also has controls for duration. The controls are pure CSS (`:has()` on rad
 
 **Reduced motion (both):** everything is simply visible from the start. Nothing fades.
 
+### Parallax
+
+All four pages share identical markup and scene styles (`site/parallax/parallax.css`). Only the
+motion code differs, so any difference you see or measure comes from the approach.
+
+**The scene model.** Each `.px-scene` contains layers (`.px-layer`) with a speed factor `--f`:
+
+| Layer | `--f` | Apparent speed |
+|---|---|---|
+| Background (soft shapes, panels, outline type) | `1` | slowest: lags behind the scroll |
+| Mid-ground (image plates) | `0.5` | lags a little |
+| Normal content (text) | (not a layer) | exactly finger speed: the reference |
+| Foreground (chips, cards) | `-0.5` | fastest: runs slightly ahead |
+
+Across a scene's whole trip through the viewport (top edge enters at the bottom → bottom edge
+leaves at the top), each layer drifts by `intensity × --f`, centred so that **every layer is
+exactly at its resting position when the scene is in the middle of the screen.** Text never moves,
+so readability never depends on the effect.
+
+**Intensities** (background drift over a full scene; mid is half, foreground half in reverse):
+
+| Name | `--i` | URL |
+|---|---|---|
+| Whisper (default) | 32px | `#whisper` or no hash |
+| Quiet | 64px | `#quiet` |
+| Noticeable | 128px | `#noticeable` |
+
+The picker is pure CSS: the hash targets an invisible `position: fixed` element and `html:has(#quiet:target)`
+switches `--i`. Links are shareable, and following one never scrolls the page. The JS versions read the
+values from `--i-whisper` / `--i-quiet` / `--i-noticeable` in the CSS, so there's one source of truth.
+They read those properties directly rather than `--i`, because browsers can apply `:target` slightly
+after deferred scripts run.
+
+**Resting state.** Every layer is `transform: none` until an approach moves it, and the scenes are
+composed to look deliberate standing still. Reduced-motion visitors, no-JS visitors and old browsers
+all get exactly that composition. Background layers extend 72px past their scene (`inset: -72px 0`)
+and scenes use `overflow: clip`, so even the largest drift never reveals an edge or widens the page.
+That was checked at 375px wide: no horizontal overflow.
+
+**The four approaches, as built and checked** (local Chrome, 2026-11-13: behaviour checks only, not performance):
+
+| | A · CSS | B · Hand-written | C · Motion | D · GSAP |
+|---|---|---|---|---|
+| JS shipped (gzip) | 0 | 1.5 KB | 29.5 KB (28.7 lib) | 46.3 KB (45.5 lib) |
+| Library budget (45 / 60 KB) | — | — | ok | **over target**, under fail |
+| Who computes each frame | browser (native view timeline) | page JS, main thread | browser: confirmed all 18 animations run on a native `ViewTimeline` | page JS, main thread |
+| Work while idle (not scrolling) | none | none: a frame is requested only on scroll, and only if a scene is on screen | none | **GSAP's ticker keeps a rAF loop running**: 48 ticks in 2 idle seconds |
+| Hidden tab | paused by browser | paused (rAF + explicit check) | paused by browser | paused by browser (rAF) |
+| Reduced motion | never applied (`@media`) | never starts; live change clears transforms | never starts; live change reloads | `gsap.matchMedia` never builds; live change reverts |
+| Older browser fallback | resting state | works (IO is universal) | Motion's own scroll listener | works |
+| Matches expected geometry | yes | yes, to 0.1px | yes | yes |
+
+Notes for whoever picks this up:
+- **C is effectively A with a 29 KB wrapper** in every current browser, because Motion hands
+  `transform` animations to the native scroll timeline. It only behaves differently in browsers too
+  old for scroll-driven animations, where it falls back to JS. A, by contrast, falls back to stillness.
+- **B and D do the same job the same way** (main-thread JS writing transforms each frame). D costs
+  45 KB more and doesn't go idle. On a phone this is where any difference in *feel* should show:
+  main-thread approaches can trail the finger by a frame while the page scrolls on the compositor.
+  Watch for it on the iPhone, and compare with A.
+- **B's rules:** scene geometry is measured only on load/resize (`ResizeObserver` on `body` catches
+  late layout changes). Each frame does exactly one read (`scrollY`), then only writes. Layers in
+  offscreen scenes aren't touched (IntersectionObserver with a 10% margin, so they update just before
+  becoming visible).
+- **`position: sticky` isn't used.** The brief listed it alongside IntersectionObserver, but sticky is
+  for *pinned* scenes (content that holds still while you scroll through it). Subtle parallax doesn't pin
+  anything, so adding it would only add complexity.
+- D uses `scrub: true` (locked to scroll) for a fair comparison. `scrub: 0.5` adds a soft catch-up lag,
+  which is a distinct feel if you want to try it.
+- The intensity picker adds a browser-history entry per click (it's a hash link). Acceptable for a test
+  bench, not for production.
+
 ## Results
 
 Every number records its source: **phone** (deployed build, real device), **emulated** (deployed
@@ -183,6 +259,12 @@ build, desktop with throttling), or **localhost** (not a measurement).
 | baseline.html | 0 | 0 | 0 | ok |
 | fade/css.html | 0 | 0 | 0 | ok |
 | fade/vanilla.html | 0 | 1.1 KB | 1.1 KB | ok |
+| parallax/css.html | 0 | 0 | 0 | ok |
+| parallax/vanilla.html | 0 | 1.5 KB | 1.5 KB | ok |
+| parallax/motion.html | 28.7 KB | 0.8 KB | 29.5 KB | ok |
+| parallax/gsap.html | 45.5 KB | 0.8 KB | 46.3 KB | library over 45 KB target (under 60 KB fail) |
+
+All totals are far below the 100 KB page budget. Vendored library versions and licences are in `site/vendor/README.md`.
 
 ### Frame rate, long tasks, CLS
 
@@ -192,7 +274,7 @@ _Waiting for the Netlify deploy. No real-phone measurements yet._
 
 - [x] Phase 1: scaffold, meter, baseline, Netlify config
 - [x] Phase 2: fade-in demos
-- [ ] Phase 3: parallax demos
+- [x] Phase 3: parallax demos
 - [ ] Phase 4: page transitions
 - [ ] Phase 5: measurement pass on the deployed build
 - [ ] Phase 6: choice and handoff summary
@@ -206,6 +288,8 @@ site/
   index.html        lists every demo
   baseline.html     control page: same content, no motion
   fade/             fade-in demos: css.html (A), vanilla.html + vanilla.js (B)
+  parallax/         parallax.css (shared scene, no motion) + css / vanilla / motion / gsap pages
+  vendor/           Motion and GSAP builds, with versions and licences in vendor/README.md
   shared/
     base.css        shared tokens and layout; nothing in it animates
     hud-loader.js   loads the meter only when switched on
