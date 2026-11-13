@@ -218,7 +218,7 @@ That was checked at 375px wide: no horizontal overflow.
 
 | | A · CSS | B · Hand-written | C · Motion | D · GSAP |
 |---|---|---|---|---|
-| JS shipped (gzip) | 0 | 1.5 KB | 29.5 KB (28.7 lib) | 46.3 KB (45.5 lib) |
+| JS shipped (gzip) | 0 | 1.6 KB | 29.6 KB (28.7 lib) | 46.4 KB (45.5 lib) |
 | Library budget (45 / 60 KB) | — | — | ok | **over target**, under fail |
 | Who computes each frame | browser (native view timeline) | page JS, main thread | browser: confirmed all 18 animations run on a native `ViewTimeline` | page JS, main thread |
 | Work while idle (not scrolling) | none | none: a frame is requested only on scroll, and only if a scene is on screen | none | **GSAP's ticker keeps a rAF loop running**: 48 ticks in 2 idle seconds |
@@ -260,9 +260,9 @@ build, desktop with throttling), or **localhost** (not a measurement).
 | fade/css.html | 0 | 0 | 0 | ok |
 | fade/vanilla.html | 0 | 1.1 KB | 1.1 KB | ok |
 | parallax/css.html | 0 | 0 | 0 | ok |
-| parallax/vanilla.html | 0 | 1.5 KB | 1.5 KB | ok |
-| parallax/motion.html | 28.7 KB | 0.8 KB | 29.5 KB | ok |
-| parallax/gsap.html | 45.5 KB | 0.8 KB | 46.3 KB | library over 45 KB target (under 60 KB fail) |
+| parallax/vanilla.html | 0 | 1.6 KB | 1.6 KB | ok |
+| parallax/motion.html | 28.7 KB | 0.9 KB | 29.6 KB | ok |
+| parallax/gsap.html | 45.5 KB | 0.9 KB | 46.4 KB | library over 45 KB target (under 60 KB fail) |
 
 All totals are far below the 100 KB page budget. Vendored library versions and licences are in `site/vendor/README.md`.
 

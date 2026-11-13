@@ -45,7 +45,7 @@
         <dl>
           <dt>Approach</dt><dd>IntersectionObserver tracks which scenes are on screen. A scroll event schedules one <code>requestAnimationFrame</code> step: one <code>scrollY</code> read, then transform writes. About 60 lines (<code>vanilla.js</code>).</dd>
           <dt>Runs on</dt><dd>The main thread. Scrolling itself is handled separately by the browser, so if the page is busy the layers can trail your finger by a frame. That shows up as a slight shimmer, mostly on phones.</dd>
-          <dt>JS shipped</dt><dd>~1.5 KB gzip (mostly comments). Idle when not scrolling, offscreen, or in a hidden tab.</dd>
+          <dt>JS shipped</dt><dd>~1.6 KB gzip (mostly comments). Idle when not scrolling, offscreen, or in a hidden tab.</dd>
           <dt>Reduced motion</dt><dd>Never starts: the composition you see at rest. Turning it on mid-visit clears all motion.</dd>
           <dt>No JavaScript</dt><dd>Same resting composition.</dd>
         </dl>
