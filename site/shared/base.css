@@ -133,6 +133,36 @@ table { border-collapse: collapse; width: 100%; font-size: var(--step--1); }
 th, td { text-align: left; padding: 0.5rem 0.75rem 0.5rem 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
 th { font-weight: 600; }
 
+/* ---- Demo page chrome (shared by every demo; nothing here animates) ---- */
+
+/* "What you're looking at" panel at the top of each demo. */
+.demo-notes {
+  background: var(--paper-2);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.25rem 0.25rem;
+  font-size: var(--step--1);
+  max-width: 44rem;
+}
+.demo-notes dl { display: grid; grid-template-columns: max-content 1fr; gap: 0.35rem 1rem; margin: 0 0 1rem; }
+.demo-notes dt { font-weight: 600; }
+.demo-notes dd { margin: 0; }
+@media (max-width: 34rem) { .demo-notes dl { grid-template-columns: 1fr; } .demo-notes dd { margin-bottom: 0.5rem; } }
+
+/* Pill-style radio group. Works with no JavaScript: demos react via :has(). */
+.controls { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin: 1rem 0; font-size: var(--step--1); }
+.controls legend, .controls .label { font-weight: 600; margin-right: 0.25rem; padding: 0; }
+.controls fieldset { border: 0; padding: 0; margin: 0; display: contents; }
+.controls label {
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+  cursor: pointer;
+}
+.controls input { position: absolute; opacity: 0; pointer-events: none; }
+.controls input:checked + span { font-weight: 600; }
+.controls label:has(input:checked) { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.controls label:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+
 .site-footer {
   border-top: 1px solid var(--rule);
   padding-block: 2rem 4rem;

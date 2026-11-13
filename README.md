@@ -9,7 +9,7 @@ the deliverable. This README explains what each one is, which approach it uses, 
 measured.
 
 - **Live site:** _added once Netlify is connected_
-- **Status:** phase 1 (scaffold, meter, baseline). Demos are added phase by phase. See [Progress](#progress).
+- **Status:** phase 2 (fade-in demos built; not yet measured on a phone). Demos are added phase by phase. See [Progress](#progress).
 
 ---
 
@@ -124,20 +124,74 @@ Measure with the browser in the foreground. Background or hidden tabs are thrott
 | Demo | Effect | Approach | Page |
 |---|---|---|---|
 | Baseline | none (control) | — | `site/baseline.html` |
+| Fade A | fade-in on enter | CSS scroll-driven (`view()`) | `site/fade/css.html` |
+| Fade B | fade-in on enter | IntersectionObserver + CSS transition | `site/fade/vanilla.html`, `vanilla.js` |
 
 _More rows are added as each phase lands._
+
+### Fade-in
+
+Both versions fade each block in with an optional small rise as it enters the viewport. There's no
+stagger or choreography. Each page has controls for rise distance (fade only / 16px / 32px),
+and B also has controls for duration. The controls are pure CSS (`:has()` on radio buttons).
+
+**The two feel different, and that's the real decision here, more than performance:**
+
+| | A · CSS scroll-driven | B · IntersectionObserver |
+|---|---|---|
+| Driven by | scroll position | a clock (CSS transition) |
+| Stop scrolling mid-fade | stays partly faded | finishes on its own |
+| Scroll back up | fades back out | stays visible (plays once) |
+| JavaScript | 0 KB | ~1.1 KB gzip (mostly comments) |
+| Per-frame work | none on the main thread | none (IO callbacks only, no rAF) |
+
+**A · CSS scroll-driven** (`site/fade/css.html`)
+- `animation-timeline: view()` with `animation-range: entry 0% entry 25vh`. Each block is fully
+  in once its top edge is a quarter of the viewport into view, whatever the block's height.
+- The hidden state exists only inside `@keyframes`, which are applied only inside
+  `@media (prefers-reduced-motion: no-preference)` **and** `@supports (animation-timeline: view())`.
+  Anything else gets the plain visible page. There's no script that can fail and no event to miss.
+- Edge case to keep in mind: a block can only finish if its top can travel 25vh into the viewport.
+  The last block on a page needs at least that much content below it. Verified on this page.
+- Print: `animation: none`.
+
+**B · IntersectionObserver** (`site/fade/vanilla.js`)
+- Blocks are hidden only under `html.fade-armed`, a class only the script adds. With no script,
+  nothing is hidden. Verified by loading the page with scripts stripped: all 13 blocks visible.
+- On start it reads every block's position once (one read pass), marks blocks already on screen
+  as revealed, *then* arms. So nothing above the fold ever blinks or fades on load.
+- Threshold is 15% of the block visible (not a negative `rootMargin`). A negative bottom margin can
+  make the last block on a page unreachable, so it would never reveal.
+- Safety nets:
+  - A watchdog reveals everything if the observer hasn't reported within 1s of the tab being
+    visible. Observers always report once on `observe()`, so silence means something is broken.
+  - Switching on reduced motion mid-visit reveals everything.
+  - `@media print` forces everything visible.
+- Only the reveal is transitioned. Hiding offscreen blocks at start is instant.
+
+**Reduced motion (both):** everything is simply visible from the start. Nothing fades.
 
 ## Results
 
 Every number records its source: **phone** (deployed build, real device), **emulated** (deployed
 build, desktop with throttling), or **localhost** (not a measurement).
 
-_No measurements yet._
+### JS weight (gzip, from `npm run size`; independent of network and device)
+
+| Page | Library | Own JS | Total | Budget |
+|---|---:|---:|---:|---|
+| baseline.html | 0 | 0 | 0 | ok |
+| fade/css.html | 0 | 0 | 0 | ok |
+| fade/vanilla.html | 0 | 1.1 KB | 1.1 KB | ok |
+
+### Frame rate, long tasks, CLS
+
+_Waiting for the Netlify deploy. No real-phone measurements yet._
 
 ## Progress
 
 - [x] Phase 1: scaffold, meter, baseline, Netlify config
-- [ ] Phase 2: fade-in demos
+- [x] Phase 2: fade-in demos
 - [ ] Phase 3: parallax demos
 - [ ] Phase 4: page transitions
 - [ ] Phase 5: measurement pass on the deployed build
@@ -151,6 +205,7 @@ package.json        npm scripts only; no dependencies
 site/
   index.html        lists every demo
   baseline.html     control page: same content, no motion
+  fade/             fade-in demos: css.html (A), vanilla.html + vanilla.js (B)
   shared/
     base.css        shared tokens and layout; nothing in it animates
     hud-loader.js   loads the meter only when switched on

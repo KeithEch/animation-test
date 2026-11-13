@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fade-in · CSS scroll-driven · animation-test</title>
+  <link rel="stylesheet" href="/shared/base.css">
+  <script type="module" src="/shared/hud-loader.js" data-tooling></script>
+  <style>
+    /*
+      FADE-IN, APPROACH A: CSS scroll-driven animation. Zero JavaScript.
+
+      Resting state: .reveal has no styles of its own, so it is fully visible.
+      The hidden starting point exists ONLY inside the keyframes, and the keyframes
+      are applied ONLY when (1) the browser supports view timelines and (2) the
+      visitor hasn't asked for reduced motion. Any other case = plain visible page.
+
+      Feel: the fade is tied to scroll position, not to a clock. Scroll slowly and
+      it fades slowly; stop halfway and it stays half-faded; scroll back up and it
+      fades back out. There is no "it played once" moment.
+    */
+    :root { --rise: 16px; }
+    html:has(#rise-0:checked)  { --rise: 0px; }
+    html:has(#rise-32:checked) { --rise: 32px; }
+
+    @media (prefers-reduced-motion: no-preference) {
+      @supports (animation-timeline: view()) {
+        .reveal {
+          animation: reveal linear both;
+          animation-timeline: view();
+          /* Fully faded in after the element's top edge has travelled 25% of
+             the viewport height into view: short and quick, whatever the element's size. */
+          animation-range: entry 0% entry 25vh;
+        }
+        @keyframes reveal {
+          from { opacity: 0; transform: translateY(var(--rise)); }
+          to   { opacity: 1; transform: none; }
+        }
+      }
+    }
+
+    /* Never print a half-faded page. */
+    @media print { .reveal { animation: none !important; } }
+
+    /* Shown only where the effect can't run, so a tester knows why nothing moves. */
+    .unsupported, .reduced { display: none; }
+    @supports not (animation-timeline: view()) { .unsupported { display: block; } }
+    @media (prefers-reduced-motion: reduce) { .reduced { display: block; } }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap"><strong>Fade-in</strong><span>A · CSS scroll-driven</span>
+      <nav><a href="/fade/vanilla.html">Compare: B · IntersectionObserver</a><a href="/">All demos</a></nav></div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="wrap">
+        <p class="eyebrow">Fade-in · approach A</p>
+        <h1>CSS scroll-driven</h1>
+        <div class="demo-notes">
+          <dl>
+            <dt>Effect</dt><dd>Each block fades in, with a small rise, as it scrolls into view. No stagger.</dd>
+            <dt>Approach</dt><dd><code>animation-timeline: view()</code>. No JavaScript.</dd>
+            <dt>Feel</dt><dd>Tied to your finger. It moves exactly as fast as you scroll and reverses if you scroll back up.</dd>
+            <dt>Reduced motion</dt><dd>Everything is simply visible. Nothing fades.</dd>
+            <dt>No support</dt><dd>Older browsers show the plain visible page.</dd>
+          </dl>
+          <p class="note unsupported">This browser doesn't support scroll-driven animations, so you're seeing the resting state.</p>
+          <p class="note reduced">Reduced motion is on, so you're seeing the reduced version: everything visible, nothing moves.</p>
+        </div>
+        <form class="controls" aria-label="Rise distance">
+          <span class="label">Rise:</span>
+          <label><input type="radio" name="rise" id="rise-0"><span>Fade only</span></label>
+          <label><input type="radio" name="rise" id="rise-16" checked><span>16px</span></label>
+          <label><input type="radio" name="rise" id="rise-32"><span>32px</span></label>
+        </form>
+      </div>
+    </section>
+
+    <section class="section"><div class="wrap grid-2">
+      <div class="plate reveal">Plate 1</div>
+      <div class="reveal"><h2>Selected work</h2><p>Placeholder copy standing in for a project summary. Long enough
+        to wrap across several lines on a phone, so text rendering is part of what's measured.</p>
+        <p>A second paragraph, because real case-study pages rarely stop at one.</p></div>
+    </div></section>
+
+    <section class="section"><div class="wrap grid-2">
+      <div class="reveal"><h2>Process</h2><p>Research, sketches, prototypes, and the decisions in between. This
+        block mirrors the rhythm of a portfolio page: heading, two paragraphs, an image.</p>
+        <p>Scroll slowly here and watch the block on the right: it fades at your pace.</p></div>
+      <div class="plate reveal">Plate 2</div>
+    </div></section>
+
+    <section class="section"><div class="wrap grid-2">
+      <div class="plate reveal">Plate 3</div>
+      <div class="plate reveal">Plate 4</div>
+    </div></section>
+
+    <section class="section"><div class="wrap">
+      <div class="reveal"><h2>A text-only section</h2><p>Fade-ins are most often applied to blocks of text
+        like this one. Try stopping mid-scroll with this paragraph near the bottom of the screen.
+        In this version it stays partly faded until you keep going.</p></div>
+    </div></section>
+
+    <section class="section"><div class="wrap grid-2">
+      <div class="reveal"><h2>Outcome</h2><p>What shipped, what changed, and what was learned. Text-heavy sections
+        like this are where fade-ins usually get applied.</p></div>
+      <div class="plate reveal">Plate 5</div>
+    </div></section>
+
+    <section class="section"><div class="wrap grid-2">
+      <div class="plate reveal">Plate 6</div>
+      <div class="plate reveal">Plate 7</div>
+    </div></section>
+
+    <section class="section"><div class="wrap grid-2">
+      <div class="plate reveal">Plate 8</div>
+      <div class="reveal"><h2>Next project</h2><p>The end of the page. The last block must still fade in
+        fully when you reach the bottom. If it doesn't, that's a bug.</p>
+        <p><a href="/fade/vanilla.html">Compare with approach B</a> · <a href="/">All demos</a></p></div>
+    </div></section>
+  </main>
+
+  <footer class="site-footer"><div class="wrap">Fade-in · approach A · CSS scroll-driven · 0 bytes of JavaScript</div></footer>
+</body>
+</html>
