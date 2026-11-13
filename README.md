@@ -1,11 +1,9 @@
 # animation-test
 
 Working reference demos for scroll animation on a static portfolio site: **subtle parallax**,
-**fade-in on enter**, and **page transitions**. Each effect is built more than one way so the
-approaches can be compared by eye and by measurement on a real phone.
+**fade-in on enter**, and **page transitions**. Each effect is built multiple ways for comparison.
 
-This repository is reference material for whoever builds the production site. The demos are
-the deliverable. This README explains what each one is, which approach it uses, and what it
+This repository is reference material. This README explains what each one is, which approach it uses, and what it
 measured.
 
 - **Live site:** _added once Netlify is connected_
