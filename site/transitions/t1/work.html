@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Work · T1 · Crossfade · animation-test</title>
+  <link rel="stylesheet" href="/shared/base.css">
+  <link rel="stylesheet" href="/transitions/transitions.css">
+  <link rel="stylesheet" href="/transitions/t1.css">
+  <script type="module" src="/shared/hud-loader.js" data-tooling></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap"><strong>Transitions</strong><span>T1 · Crossfade</span>
+      <nav><a href="/transitions/t1/work.html">Work</a><a href="/">All demos</a></nav></div>
+  </header>
+  <main class="wrap">
+    <section class="section">
+      <p class="eyebrow">Page transitions · T1 · Crossfade</p>
+      <h1>Selected work</h1>
+      <p class="lede">Open a project, then use the browser's Back button (or swipe back on a phone). Watch both directions.</p>
+      <div class="demo-notes">
+        <dl>
+          <dt>Effect</dt><dd>The old page dissolves into the new one (280ms). Nothing moves.</dd>
+          <dt>Approach</dt><dd>Cross-document View Transitions: <code>@view-transition { navigation: auto }</code> on both pages. CSS only, 0 KB JavaScript.</dd>
+          <dt>Feel</dt><dd>Calm and quiet. Closest to "no transition" while still smoothing the cut.</dd>
+          <dt>Reduced motion</dt><dd>The same crossfade, shortened to 150ms (opacity only, no movement).</dd>
+          <dt>No support</dt><dd>Firefox (release) and older browsers: a normal instant page change.</dd>
+        </dl>
+      </div>
+      <nav class="tx-options" aria-label="Transition options">
+        <a href="/transitions/t1/work.html" aria-current="page">T1 · Crossfade</a>
+        <a href="/transitions/t2/work.html">T2 · Shared element</a>
+        <a href="/transitions/t3/work.html">T3 · Scripted fade</a>
+        <a href="/transitions/t4/work.html">T4 · Slide-over</a>
+      </nav>
+    </section>
+    <section class="section" aria-label="Projects">
+      <div class="tx-cards">
+        <a class="tx-card" href="/transitions/t1/p1.html">
+          <div class="plate tint-1 vt-p1">Project 1</div>
+          <h3>Wayfinding system</h3><p>Signage and maps for a transit hub.</p>
+        </a>
+        <a class="tx-card" href="/transitions/t1/p2.html">
+          <div class="plate tint-2 vt-p2">Project 2</div>
+          <h3>Banking onboarding</h3><p>From twelve steps to four.</p>
+        </a>
+        <a class="tx-card" href="/transitions/t1/p3.html">
+          <div class="plate tint-3 vt-p3">Project 3</div>
+          <h3>Field research app</h3><p>Offline-first notes for researchers.</p>
+        </a>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer"><div class="wrap">Page transitions · T1 · Crossfade</div></footer>
+</body>
+</html>

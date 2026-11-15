@@ -1,0 +1,22 @@
+/*
+  T4 · SLIDE-OVER (curtain). Cross-document View Transitions, CSS only.
+  The new page slides up from the bottom and covers the old one, which sinks back slightly
+  (a small scale-down and dim). Transform and opacity only. The bolder option, here for contrast.
+  Same direction on Back (reversing direction would need a script; left out on purpose).
+
+  No support: a normal instant page change.
+*/
+@view-transition { navigation: auto; }
+
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) { animation: t4-sink 480ms cubic-bezier(0.7, 0, 0.3, 1) both; }
+  ::view-transition-new(root) { animation: t4-rise 480ms cubic-bezier(0.7, 0, 0.3, 1) both; }
+}
+@keyframes t4-sink { to { transform: scale(0.96); opacity: 0.4; } }
+@keyframes t4-rise { from { transform: translateY(100%); } }
+
+/* Reduced motion: nothing slides; the browser's default crossfade, kept brief. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation-duration: 150ms; }
+}

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Work · T2 · Shared element · animation-test</title>
+  <link rel="stylesheet" href="/shared/base.css">
+  <link rel="stylesheet" href="/transitions/transitions.css">
+  <link rel="stylesheet" href="/transitions/t2.css">
+  <script type="module" src="/shared/hud-loader.js" data-tooling></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap"><strong>Transitions</strong><span>T2 · Shared element</span>
+      <nav><a href="/transitions/t2/work.html">Work</a><a href="/">All demos</a></nav></div>
+  </header>
+  <main class="wrap">
+    <section class="section">
+      <p class="eyebrow">Page transitions · T2 · Shared element</p>
+      <h1>Selected work</h1>
+      <p class="lede">Open a project, then use the browser's Back button (or swipe back on a phone). Watch both directions.</p>
+      <div class="demo-notes">
+        <dl>
+          <dt>Effect</dt><dd>The header holds still; the clicked project image grows from its card into the case study (and shrinks back on Back). Everything else crossfades.</dd>
+          <dt>Approach</dt><dd>Cross-document View Transitions with matching <code>view-transition-name</code>s. CSS only, 0 KB JavaScript.</dd>
+          <dt>Feel</dt><dd>The most "designed". It shows where you came from and where you went.</dd>
+          <dt>Reduced motion</dt><dd>No growing or travelling: a brief 150ms crossfade.</dd>
+          <dt>No support</dt><dd>Firefox (release) and older browsers: a normal instant page change.</dd>
+        </dl>
+      </div>
+      <nav class="tx-options" aria-label="Transition options">
+        <a href="/transitions/t1/work.html">T1 · Crossfade</a>
+        <a href="/transitions/t2/work.html" aria-current="page">T2 · Shared element</a>
+        <a href="/transitions/t3/work.html">T3 · Scripted fade</a>
+        <a href="/transitions/t4/work.html">T4 · Slide-over</a>
+      </nav>
+    </section>
+    <section class="section" aria-label="Projects">
+      <div class="tx-cards">
+        <a class="tx-card" href="/transitions/t2/p1.html">
+          <div class="plate tint-1 vt-p1">Project 1</div>
+          <h3>Wayfinding system</h3><p>Signage and maps for a transit hub.</p>
+        </a>
+        <a class="tx-card" href="/transitions/t2/p2.html">
+          <div class="plate tint-2 vt-p2">Project 2</div>
+          <h3>Banking onboarding</h3><p>From twelve steps to four.</p>
+        </a>
+        <a class="tx-card" href="/transitions/t2/p3.html">
+          <div class="plate tint-3 vt-p3">Project 3</div>
+          <h3>Field research app</h3><p>Offline-first notes for researchers.</p>
+        </a>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer"><div class="wrap">Page transitions · T2 · Shared element</div></footer>
+</body>
+</html>

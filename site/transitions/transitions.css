@@ -1,0 +1,28 @@
+/*
+  Shared layout for the page-transition demos. NOTHING in this file animates.
+  Each option adds its own transition file (t1.css … t4.css / t3.js).
+  Pages: work.html (a project list) → p1/p2/p3.html (case studies), like a portfolio.
+*/
+
+.tx-options { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0 0; font-size: var(--step--1); }
+.tx-options a { text-decoration: none; color: inherit; border: 1px solid var(--rule); border-radius: 999px; padding: 0.35rem 0.8rem; }
+.tx-options a[aria-current] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+.tx-cards { display: grid; gap: var(--gap); grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
+.tx-card { display: block; color: inherit; text-decoration: none; }
+.tx-card .plate { aspect-ratio: 4 / 3; }
+.tx-card h3 { margin-top: 0.75rem; }
+.tx-card p { color: var(--ink-soft); font-size: var(--step--1); }
+.tx-card:hover h3 { text-decoration: underline; text-underline-offset: 0.18em; }
+
+/* Each project gets its own tint so you can follow a plate from list to page. */
+.tint-1 { background: radial-gradient(120% 90% at 20% 15%, var(--accent-soft), transparent 60%), var(--paper-2); }
+.tint-2 { background: radial-gradient(120% 90% at 80% 20%, color-mix(in oklab, var(--accent-soft) 50%, #6b8fb5 50%), transparent 60%), var(--paper-2); }
+.tint-3 { background: radial-gradient(120% 90% at 50% 90%, color-mix(in oklab, var(--accent-soft) 40%, #7ba37b 60%), transparent 60%), var(--paper-2); }
+
+/* Case-study page: same 4:3 plate as the card, just larger, so a morph is a pure scale. */
+.tx-hero { display: grid; gap: var(--gap); grid-template-columns: 1.3fr 1fr; align-items: end; }
+.tx-hero .plate { aspect-ratio: 4 / 3; }
+@media (max-width: 44rem) { .tx-hero { grid-template-columns: 1fr; } }
+
+.tx-next { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; font-size: var(--step-0); }

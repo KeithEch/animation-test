@@ -1,0 +1,32 @@
+/*
+  T2 · SHARED ELEMENT. Cross-document View Transitions, CSS only.
+  Elements with the same view-transition-name on both pages are matched by the browser:
+   - the site header holds perfectly still while the rest of the page changes;
+   - the clicked project's plate grows from its card into the case-study hero (and shrinks
+     back on Back). Every project has its own name (project-1/2/3), set statically in the HTML.
+  Everything else crossfades.
+
+  Strictness note: to morph between two sizes, the browser animates the width/height of its
+  own ::view-transition-group pseudo-element. That's the browser's overlay, not the page
+  layout, so it causes no layout shift. But it isn't strictly "transform + opacity only".
+  Both plates are 4:3, so visually it's a pure scale.
+
+  No support: a normal instant page change.
+*/
+@view-transition { navigation: auto; }
+
+.site-header { view-transition-name: site-header; }
+.vt-p1 { view-transition-name: project-1; }
+.vt-p2 { view-transition-name: project-2; }
+.vt-p3 { view-transition-name: project-3; }
+
+::view-transition-group(*) { animation-duration: 420ms; animation-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1); }
+::view-transition-old(root),
+::view-transition-new(root) { animation-duration: 250ms; }
+
+/* Reduced motion: no morph (nothing travels across the screen), just a brief crossfade. */
+@media (prefers-reduced-motion: reduce) {
+  .site-header, .vt-p1, .vt-p2, .vt-p3 { view-transition-name: none; }
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation-duration: 150ms; }
+}

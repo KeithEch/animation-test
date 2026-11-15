@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trap test · Page A · animation-test</title>
+  <link rel="stylesheet" href="/shared/base.css">
+  <!-- The combination that strands content: a page transition + IntersectionObserver fade-ins. -->
+  <link rel="stylesheet" href="/transitions/t3.css">
+  <script src="/transitions/t3.js" defer></script>
+  <script src="/fade/vanilla.js" defer></script>
+  <script src="/transitions/trap/trap-check.js" defer data-tooling></script>
+  <script type="module" src="/shared/hud-loader.js" data-tooling></script>
+  <style>
+    /* Same fade-in rules as /fade/vanilla.html (approach B). */
+    @media (prefers-reduced-motion: no-preference) {
+      .fade-armed .reveal.is-in { transition: opacity 600ms ease-out, transform 600ms cubic-bezier(0.2, 0.7, 0.2, 1); }
+      .fade-armed .reveal:not(.is-in) { opacity: 0; transform: translateY(16px); }
+    }
+    @media print { .reveal { opacity: 1 !important; transform: none !important; } }
+    .steps li { margin-bottom: 0.35rem; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap"><strong>Trap test</strong><span>Page A</span>
+      <nav><a href="/transitions/trap/b.html">Page B</a><a href="/">All demos</a></nav></div>
+  </header>
+  <main>
+    <section class="section"><div class="wrap">
+      <p class="eyebrow">Trap test · Page A</p>
+      <h1>Can content get stranded?</h1>
+      <div class="demo-notes">
+        <p><strong>What this tests:</strong> a page transition (T3, scripted fade) combined with IntersectionObserver
+          fade-ins (fade-in B). Combinations like this are where content gets left invisible after navigating, most
+          often on Back. The badge in the top-right corner checks for it automatically.</p>
+        <ol class="steps">
+          <li>Scroll about halfway down this page.</li>
+          <li>Tap a "Go to Page B" link.</li>
+          <li>Press Back, or swipe back on the iPhone.</li>
+          <li>The badge must say <strong>PASS</strong>. Scroll further: newly revealed blocks must keep fading in.</li>
+          <li>Repeat with Forward, and with reloading the page.</li>
+        </ol>
+      </div>
+    </div></section>
+    <section class="section"><div class="wrap grid-2">
+      <div class="plate reveal">Block 1</div>
+      <div class="reveal"><h2>Block 1</h2><p>Fade-in content. Scroll part-way down, then follow the link to the other page and press Back.</p>
+        <p><a href="/transitions/trap/b.html">Go to Page B →</a></p></div>
+    </div></section>
+    <section class="section"><div class="wrap grid-2">
+      <div class="reveal"><h2>Block 2</h2><p>More fade-in content, so some blocks are still waiting to reveal when you leave the page.</p></div>
+      <div class="plate reveal">Block 2</div>
+    </div></section>
+    <section class="section"><div class="wrap grid-2">
+      <div class="reveal"><h2>Block 3</h2><p>More fade-in content, so some blocks are still waiting to reveal when you leave the page.</p></div>
+      <div class="plate reveal">Block 3</div>
+    </div></section>
+    <section class="section"><div class="wrap grid-2">
+      <div class="plate reveal">Block 4</div>
+      <div class="reveal"><h2>Block 4</h2><p>Fade-in content. Scroll part-way down, then follow the link to the other page and press Back.</p>
+        <p><a href="/transitions/trap/b.html">Go to Page B →</a></p></div>
+    </div></section>
+    <section class="section"><div class="wrap grid-2">
+      <div class="reveal"><h2>Block 5</h2><p>More fade-in content, so some blocks are still waiting to reveal when you leave the page.</p></div>
+      <div class="plate reveal">Block 5</div>
+    </div></section>
+    <section class="section"><div class="wrap grid-2">
+      <div class="reveal"><h2>Block 6</h2><p>More fade-in content, so some blocks are still waiting to reveal when you leave the page.</p></div>
+      <div class="plate reveal">Block 6</div>
+    </div></section>
+    <section class="section"><div class="wrap grid-2">
+      <div class="plate reveal">Block 7</div>
+      <div class="reveal"><h2>Block 7</h2><p>Fade-in content. Scroll part-way down, then follow the link to the other page and press Back.</p>
+        <p><a href="/transitions/trap/b.html">Go to Page B →</a></p></div>
+    </div></section>
+  </main>
+  <footer class="site-footer"><div class="wrap">Trap test · Page A · <a href="/transitions/trap/b.html">Page B</a></div></footer>
+</body>
+</html>

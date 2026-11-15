@@ -1,0 +1,16 @@
+/*
+  T1 · CROSSFADE. Cross-document View Transitions, CSS only.
+  Both pages opt in with the same rule. The browser snapshots the old page, loads the new one,
+  and crossfades the two. Only opacity changes.
+  No support (Firefox release, older browsers): a normal instant page change.
+*/
+@view-transition { navigation: auto; }
+
+::view-transition-old(root),
+::view-transition-new(root) { animation-duration: 280ms; animation-timing-function: ease; }
+
+/* Reduced motion: it's already opacity-only, so just make it brief. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation-duration: 150ms; }
+}

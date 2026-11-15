@@ -7,7 +7,7 @@ This repository is reference material. This README explains what each one is, wh
 measured.
 
 - **Live site:** _added once Netlify is connected_
-- **Status:** phase 3 (fade-in and parallax demos built; not yet measured on a phone). Demos are added phase by phase. See [Progress](#progress).
+- **Status:** phase 4 (all demos built; not yet measured on a phone). Demos are added phase by phase. See [Progress](#progress).
 
 ---
 
@@ -48,10 +48,11 @@ Checked against MDN browser-compat-data and caniuse on the date above. Re-check 
 | Feature | Chrome / Edge | Firefox | Safari (macOS + iOS) |
 |---|---|---|---|
 | Scroll-driven animations (`animation-timeline: scroll()`, `view()`) | 115+ | **159+** (current stable is 160) | **26+** |
-| Cross-document View Transitions (`@view-transition`) | 126+ | partial (160+) | 18.2+ |
+| Cross-document View Transitions (`@view-transition`) | 126+ | **not in release** (preview builds only, checked 2026-11-15) | 18.2+ |
 
-The scroll-driven column is new: Firefox only shipped it recently. Visitors on older browsers get the
-resting (static) state, which is complete by design.
+Firefox only recently shipped scroll-driven animations. Visitors on older browsers get the resting
+(static) state, which is complete by design. Without cross-document View Transitions, links simply
+change page instantly. Only T3 animates in Firefox today.
 
 ## Running it locally
 
@@ -128,6 +129,11 @@ Measure with the browser in the foreground. Background or hidden tabs are thrott
 | Parallax B | subtle parallax | IntersectionObserver + hand-written rAF step | `site/parallax/vanilla.html`, `vanilla.js` |
 | Parallax C | subtle parallax | Motion `animate()` + `scroll()` | `site/parallax/motion.html`, `motion.js` |
 | Parallax D | subtle parallax | GSAP + ScrollTrigger (`scrub: true`) | `site/parallax/gsap.html`, `gsap.js` |
+| Transition T1 | crossfade | cross-document View Transitions, CSS only | `site/transitions/t1/`, `t1.css` |
+| Transition T2 | shared element (header holds, image morphs) | cross-document View Transitions, CSS only | `site/transitions/t2/`, `t2.css` |
+| Transition T3 | fade out → fade in | small script + CSS | `site/transitions/t3/`, `t3.css`, `t3.js` |
+| Transition T4 | slide-over | cross-document View Transitions, CSS only | `site/transitions/t4/`, `t4.css` |
+| Trap test | T3 + fade-in B + Back/Forward | self-checking pages | `site/transitions/trap/` |
 
 _More rows are added as each phase lands._
 
@@ -245,6 +251,67 @@ Notes for whoever picks this up:
 - The intensity picker adds a browser-history entry per click (it's a hash link). Acceptable for a test
   bench, not for production.
 
+### Page transitions
+
+**No client-side router, on purpose.** Every link is a real page load. The known failure (a router's
+soft navigation swaps the page without re-running scripts, so IntersectionObserver fade-ins never
+re-arm and content stays at `opacity: 0`) can't happen when there's no soft navigation. Cross-document
+View Transitions give router-style transitions between real pages.
+
+Each option has the same four pages: `work.html` (project list) and `p1`–`p3.html` (case studies),
+like a portfolio. The shared layout is `site/transitions/transitions.css`, which contains no motion.
+
+| | T1 · Crossfade | T2 · Shared element | T3 · Scripted fade | T4 · Slide-over |
+|---|---|---|---|---|
+| What you see | old page dissolves into new (280ms) | header holds still; clicked image grows into the case-study hero (420ms), rest crossfades | fade out (200ms) → fade in (260ms) | new page slides up over the old, which sinks back (480ms) |
+| JavaScript | 0 | 0 | 0.7 KB | 0 |
+| Mechanism | `@view-transition { navigation: auto }` | same, + `view-transition-name` on header and each project image | click handler delays navigation 200ms; entrance is a CSS animation | same as T1, + custom keyframes on `::view-transition-old/new(root)` |
+| Properties animated | opacity | opacity, transform, and the browser's own group size (see below) | opacity | transform, opacity |
+| Back button | animates | animates in reverse (image shrinks back) | plain restore; trap handled | animates (same direction) |
+| Firefox (release) | instant page change | instant page change | animates | instant page change |
+| Reduced motion | 150ms crossfade | names removed, so a 150ms crossfade only | no fade, instant | 150ms crossfade |
+| Cost to the visitor | none | none | **adds 200ms before the next page starts loading** | none |
+
+Notes:
+- **T2 and strictness.** To grow an image between two sizes, the browser animates the width/height of
+  its own `::view-transition-group` overlay. That's not the page's layout and causes no layout shift,
+  but it isn't strictly "transform and opacity only". Both images are 4:3, so it reads as a pure scale.
+  If the rule must be absolute, T1 or T4 satisfy it fully.
+- **Reduced motion keeps a 150ms crossfade** rather than a hard cut. Opacity changes don't move anything
+  on screen, which is what triggers vestibular discomfort. Set the duration to `0s` in the reduced
+  block for a pure cut.
+- **T3 is the only option that works in Firefox today.** But it makes every navigation 200ms slower and
+  shows a brief empty frame between pages. T1 is the same look without either cost, wherever it's supported.
+- **T4's direction doesn't reverse on Back.** Reversing needs a few lines of script (a `pagereveal`
+  handler setting a view-transition type). Left out to keep it CSS-only.
+
+**T3's trap, and the trap test.** Browsers keep recently left pages frozen in memory (the back/forward
+cache) and restore them exactly as left. For T3 that means faded to opacity 0. `t3.js` clears that on
+`pageshow`, which fires on every show, including restores. It also has a 4-second safety net that
+un-fades the page if navigation never happens. The page entrance is a CSS animation that starts on its
+own and doesn't wait for any event, with `animation-fill-mode: backwards` so it never pins opacity
+afterwards.
+
+`site/transitions/trap/` combines T3 with fade-in B (the IntersectionObserver version, the one at risk)
+on two long pages. `trap-check.js` (tooling, excluded from budgets) shows a PASS/FAIL badge. After
+every show and every scroll it waits for fades to settle, then checks that the page isn't faded out and
+that every fade-in block at least 25% on screen is fully visible. It also reports how the page was
+shown: fresh load, reload, or restored from memory.
+
+Checked locally (Chrome, 2026-11-15):
+- Fresh load: PASS.
+- Back after scrolling halfway and leaving: PASS. The preview browser reloaded rather than restoring from memory.
+- Restore-from-memory simulated (page left faded, then `pageshow` with `persisted: true`): PASS.
+  Before the event fired, the page was at opacity 0, which is the failure this guards against.
+- Still to do on a real device: iPhone Safari swipe-back, which normally *does* restore from memory.
+
+**If a client-side router is ever adopted** (e.g. Astro's `<ClientRouter />`):
+1. Initialise fade-ins on the router's "page loaded" event (`astro:page-load`), not just on first load.
+2. Disconnect the old observer before the swap (`astro:before-swap`).
+3. Keep the rule that only the script can hide content, so a missed re-init leaves content visible
+   rather than invisible.
+4. Re-run the trap test.
+
 ## Results
 
 Every number records its source: **phone** (deployed build, real device), **emulated** (deployed
@@ -262,6 +329,10 @@ build, desktop with throttling), or **localhost** (not a measurement).
 | parallax/motion.html | 28.7 KB | 0.9 KB | 29.6 KB | ok |
 | parallax/gsap.html | 45.5 KB | 0.9 KB | 46.4 KB | library over 45 KB target (under 60 KB fail) |
 
+| transitions/t1, t2, t4 (all pages) | 0 | 0 | 0 | ok |
+| transitions/t3 (all pages) | 0 | 0.7 KB | 0.7 KB | ok |
+| transitions/trap/a, b | 0 | 1.8 KB | 1.8 KB | ok (T3 + fade-in B) |
+
 All totals are far below the 100 KB page budget. Vendored library versions and licences are in `site/vendor/README.md`.
 
 ### Frame rate, long tasks, CLS
@@ -273,7 +344,7 @@ _Waiting for the Netlify deploy. No real-phone measurements yet._
 - [x] Phase 1: scaffold, meter, baseline, Netlify config
 - [x] Phase 2: fade-in demos
 - [x] Phase 3: parallax demos
-- [ ] Phase 4: page transitions
+- [x] Phase 4: page transitions
 - [ ] Phase 5: measurement pass on the deployed build
 - [ ] Phase 6: choice and handoff summary
 
@@ -287,6 +358,8 @@ site/
   baseline.html     control page: same content, no motion
   fade/             fade-in demos: css.html (A), vanilla.html + vanilla.js (B)
   parallax/         parallax.css (shared scene, no motion) + css / vanilla / motion / gsap pages
+  transitions/      transitions.css (shared, no motion), t1–t4 styles + t3.js,
+                    one folder per option (work.html, p1–p3.html), trap/ (self-checking trap test)
   vendor/           Motion and GSAP builds, with versions and licences in vendor/README.md
   shared/
     base.css        shared tokens and layout; nothing in it animates

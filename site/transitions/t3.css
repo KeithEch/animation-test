@@ -1,0 +1,14 @@
+/*
+  T3 · SCRIPTED FADE. Works in every browser.
+  Leaving: t3.js adds .is-leaving on link click; the page fades out (200ms), then navigates.
+  Arriving: the new page fades in with a plain CSS animation that starts by itself. It isn't
+  waiting for any event or script, so it can't get stuck.
+
+  The fill mode is `backwards` (not `both`), so once the entrance finishes the animation
+  stops holding opacity, and .is-leaving can fade the page out again later.
+*/
+@media (prefers-reduced-motion: no-preference) {
+  body { animation: t3-enter 260ms ease-out backwards; }
+  .is-leaving body { opacity: 0; transition: opacity 200ms ease-in; }
+}
+@keyframes t3-enter { from { opacity: 0; } }

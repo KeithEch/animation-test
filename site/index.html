@@ -81,7 +81,20 @@
       </ul>
 
       <h3 style="margin-top:2.5rem">3 · Page transitions</h3>
-      <ul class="demo-list"><li><span class="soon">Coming in phase 4</span><span>Crossfade, shared element, scripted fade-out, curtain wipe.</span></li></ul>
+      <p class="note">Each opens on a "Work" list. Open a project, then press Back (or swipe back). Judge both directions.
+        T1, T2 and T4 need Chrome/Edge 126+ or Safari 18.2+. In Firefox they fall back to a normal page change.</p>
+      <ul class="demo-list">
+        <li><a href="/transitions/t1/work.html">T1 · Crossfade</a>
+          <span>The old page dissolves into the new. CSS only. The quietest option.</span></li>
+        <li><a href="/transitions/t2/work.html">T2 · Shared element</a>
+          <span>The header holds still; the project image grows from its card into the page. CSS only.</span></li>
+        <li><a href="/transitions/t3/work.html">T3 · Scripted fade</a>
+          <span>Fade out, then fade in. 0.7 KB of JavaScript, and works in every browser including Firefox.</span></li>
+        <li><a href="/transitions/t4/work.html">T4 · Slide-over</a>
+          <span>The new page slides up over the old one. CSS only. The bold option, for contrast.</span></li>
+        <li><a href="/transitions/trap/a.html">Trap test</a>
+          <span>Page transition + fade-ins + the Back button. A badge checks automatically that nothing is left invisible.</span></li>
+      </ul>
     </section>
   </main>
 

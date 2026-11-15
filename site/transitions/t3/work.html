@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Work · T3 · Scripted fade · animation-test</title>
+  <link rel="stylesheet" href="/shared/base.css">
+  <link rel="stylesheet" href="/transitions/transitions.css">
+  <link rel="stylesheet" href="/transitions/t3.css">
+  <script src="/transitions/t3.js" defer></script>
+  <script type="module" src="/shared/hud-loader.js" data-tooling></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap"><strong>Transitions</strong><span>T3 · Scripted fade</span>
+      <nav><a href="/transitions/t3/work.html">Work</a><a href="/">All demos</a></nav></div>
+  </header>
+  <main class="wrap">
+    <section class="section">
+      <p class="eyebrow">Page transitions · T3 · Scripted fade</p>
+      <h1>Selected work</h1>
+      <p class="lede">Open a project, then use the browser's Back button (or swipe back on a phone). Watch both directions.</p>
+      <div class="demo-notes">
+        <dl>
+          <dt>Effect</dt><dd>On click the page fades out (200ms), then the new page fades in (260ms).</dd>
+          <dt>Approach</dt><dd>A tiny script delays navigation while a CSS transition runs; the entrance is a CSS animation. ~0.7 KB JavaScript.</dd>
+          <dt>Feel</dt><dd>Similar to T1, but with a brief dip to the background colour between pages, and a 200ms delay before the new page even starts loading.</dd>
+          <dt>Reduced motion</dt><dd>No fades: plain, instant navigation.</dd>
+          <dt>Works in</dt><dd>Every browser, including Firefox.</dd>
+          <dt>Trap handled</dt><dd>Press Back after clicking a link: the page you return to must be fully visible, not faded out.</dd>
+        </dl>
+      </div>
+      <nav class="tx-options" aria-label="Transition options">
+        <a href="/transitions/t1/work.html">T1 · Crossfade</a>
+        <a href="/transitions/t2/work.html">T2 · Shared element</a>
+        <a href="/transitions/t3/work.html" aria-current="page">T3 · Scripted fade</a>
+        <a href="/transitions/t4/work.html">T4 · Slide-over</a>
+      </nav>
+    </section>
+    <section class="section" aria-label="Projects">
+      <div class="tx-cards">
+        <a class="tx-card" href="/transitions/t3/p1.html">
+          <div class="plate tint-1 vt-p1">Project 1</div>
+          <h3>Wayfinding system</h3><p>Signage and maps for a transit hub.</p>
+        </a>
+        <a class="tx-card" href="/transitions/t3/p2.html">
+          <div class="plate tint-2 vt-p2">Project 2</div>
+          <h3>Banking onboarding</h3><p>From twelve steps to four.</p>
+        </a>
+        <a class="tx-card" href="/transitions/t3/p3.html">
+          <div class="plate tint-3 vt-p3">Project 3</div>
+          <h3>Field research app</h3><p>Offline-first notes for researchers.</p>
+        </a>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer"><div class="wrap">Page transitions · T3 · Scripted fade</div></footer>
+</body>
+</html>
