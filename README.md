@@ -6,7 +6,7 @@ Working reference demos for scroll animation on a static portfolio site: **subtl
 This repository is reference material. This README explains what each one is, which approach it uses, and what it
 measured.
 
-- **Live site:** _added once Netlify is connected_
+- **Live site:** https://animation75.netlify.app/ (auto-deploys from `main`)
 - **Status:** phase 4 (all demos built; not yet measured on a phone). Demos are added phase by phase. See [Progress](#progress).
 
 ---
