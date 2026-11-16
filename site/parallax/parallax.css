@@ -20,10 +20,12 @@
    URL is shareable. The target is position:fixed so following the link never scrolls. */
 :root {
   --i-whisper: 32px; --i-quiet: 64px; --i-noticeable: 128px;   /* the single source of truth */
+  --i-loud: 400px;   /* TEST ONLY: deliberately excessive, to tell "too subtle" apart from "not running" */
   --i: var(--i-whisper);
 }
 html:has(#quiet:target)      { --i: var(--i-quiet); }
 html:has(#noticeable:target) { --i: var(--i-noticeable); }
+html:has(#loud:target)       { --i: var(--i-loud); }
 /* JS versions read --i-<hash> directly: browsers may apply :target a moment after deferred
    scripts run, so reading --i at startup could see the default. */
 .px-hash { position: fixed; top: 0; left: 0; width: 0; height: 0; overflow: hidden; }
@@ -31,9 +33,10 @@ html:has(#noticeable:target) { --i: var(--i-noticeable); }
 /* ---- Intensity picker + comparison matrix ---- */
 .px-picker a { text-decoration: none; color: inherit; border: 1px solid var(--rule); border-radius: 999px; padding: 0.35rem 0.8rem; }
 .px-picker a[href="#whisper"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-html:has(#quiet:target, #noticeable:target) .px-picker a[href="#whisper"] { background: none; color: inherit; border-color: var(--rule); }
+html:has(#quiet:target, #noticeable:target, #loud:target) .px-picker a[href="#whisper"] { background: none; color: inherit; border-color: var(--rule); }
 html:has(#quiet:target) .px-picker a[href="#quiet"],
-html:has(#noticeable:target) .px-picker a[href="#noticeable"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+html:has(#noticeable:target) .px-picker a[href="#noticeable"],
+html:has(#loud:target) .px-picker a[href="#loud"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 
 .px-matrix { margin-top: 1.5rem; max-width: 44rem; }
 .px-matrix td:first-child { white-space: nowrap; }
@@ -50,6 +53,9 @@ html:has(#noticeable:target) .px-picker a[href="#noticeable"] { background: var(
 
 /* Background layer fills the scene with headroom for the largest drift (±64px at #noticeable). */
 .px-bg { position: absolute; inset: -72px 0; z-index: -1; pointer-events: none; }
+/* Loud (test only) drifts ±200px, so the background needs more headroom. Mid and foreground
+   layers move ±100px and may overlap text or be clipped at scene edges: acceptable for a test. */
+html:has(#loud:target) .px-bg { inset: -210px 0; }
 
 .blob { position: absolute; border-radius: 50%; }
 .blob.a { width: 60vmax; height: 60vmax; left: -18vmax; top: -10%;

@@ -20,6 +20,7 @@
     :root { --rise: 16px; --dur: 600ms; }
     html:has(#rise-0:checked)  { --rise: 0px; }
     html:has(#rise-32:checked) { --rise: 32px; }
+    html:has(#rise-loud:checked) { --rise: 120px; } /* TEST ONLY: deliberately excessive */
     html:has(#dur-400:checked) { --dur: 400ms; }
     html:has(#dur-900:checked) { --dur: 900ms; }
 
@@ -63,6 +64,7 @@
           <label><input type="radio" name="rise" id="rise-0"><span>Fade only</span></label>
           <label><input type="radio" name="rise" id="rise-16" checked><span>16px</span></label>
           <label><input type="radio" name="rise" id="rise-32"><span>32px</span></label>
+          <label><input type="radio" name="rise" id="rise-loud"><span>Loud · 120px (test only)</span></label>
         </form>
         <form class="controls" aria-label="Duration">
           <span class="label">Duration:</span>

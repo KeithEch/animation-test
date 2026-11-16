@@ -107,6 +107,23 @@ What each browser can report:
 So on the iPhone, long tasks and CLS are marked "n/a". They're covered instead by Chrome on desktop
 with DevTools CPU throttling. That's labelled **emulated**, never "phone".
 
+### The motion status pill
+
+Every demo page shows a small pill in the bottom-left corner that says, in plain words, whether
+that page's motion is actually running. It reports what the page *did*, not what it should do:
+
+| Dot | Meaning |
+|---|---|
+| green | Running. It also says how (browser-driven scroll-linked, or page script) and the current intensity or rise. |
+| grey | Off because the device's Reduce Motion setting is on, or a control page, or the tab is in the background. |
+| amber | This browser doesn't support the effect, so the still version shows. |
+| red | Should be running but isn't. That's a bug: note the page and browser. |
+
+Tap it to shrink it to a dot. It moves up when the meter is open. It's tooling (`shared/status.js`,
+loaded by `hud-loader.js`), excluded from JS budgets, and it never changes an animation.
+On transition pages it reports whether the browser supports the transition, because nothing moves until you click.
+**Remove it (one line in `hud-loader.js`) before reusing any demo in production.**
+
 ### Test devices
 
 | Device | Role | Notes |
@@ -140,8 +157,10 @@ _More rows are added as each phase lands._
 ### Fade-in
 
 Both versions fade each block in with an optional small rise as it enters the viewport. There's no
-stagger or choreography. Each page has controls for rise distance (fade only / 16px / 32px),
-and B also has controls for duration. The controls are pure CSS (`:has()` on radio buttons).
+stagger or choreography. Each page has controls for rise distance (fade only / 16px / 32px /
+**Loud 120px, test only**), and B also has controls for duration. The controls are pure CSS (`:has()` on radio buttons).
+On A, Loud also stretches the fade from 25% to 60% of a screen height of scrolling. Like parallax Loud,
+it's a diagnostic for "too subtle vs not running", not a candidate.
 
 **The two feel different, and that's the real decision here, more than performance:**
 
@@ -205,6 +224,11 @@ so readability never depends on the effect.
 | Whisper (default) | 32px | `#whisper` or no hash |
 | Quiet | 64px | `#quiet` |
 | Noticeable | 128px | `#noticeable` |
+| Loud (**test only**) | 400px | `#loud` |
+
+**Loud is a diagnostic, not a candidate.** It's deliberately excessive, so a tester can tell "too subtle
+to notice" apart from "not running". At this size the background gets extra headroom (`inset: -210px 0`).
+Mid and foreground layers move ±100px and may overlap text or clip at scene edges. That's accepted for a test.
 
 The picker is pure CSS: the hash targets an invisible `position: fixed` element and `html:has(#quiet:target)`
 switches `--i`. Links are shareable, and following one never scrolls the page. The JS versions read the
@@ -335,6 +359,24 @@ build, desktop with throttling), or **localhost** (not a measurement).
 
 All totals are far below the 100 KB page budget. Vendored library versions and licences are in `site/vendor/README.md`.
 
+### Visual review, round 1 (designer, 2026-11-15; impressions, not measurements)
+
+Seen on the deployed build and localhost, in Chrome on Windows desktop and Chrome on iPhone 14 (iOS 26.5.2;
+Chrome on iOS uses Safari's engine).
+
+- **Fade-in B** (IntersectionObserver) was preferred on desktop and phone. Best combination: 32px rise, 900ms.
+  "Fade only" appeared to do nothing.
+- **Fade-in A and parallax A** (CSS): no visible effect.
+- **Parallax B, C, D:** no visible effect on desktop. "Noticeable" looked good on the iPhone.
+- **Page transitions:** all visible. Crossfade felt too subtle and quick. Slide-over worked, but the designer dislikes it.
+- **Trap test:** PASS on desktop and on iPhone (Netlify).
+
+**Investigating "no effect on desktop"** (2026-11-15). Windows' Animation effects setting is on, so reduced
+motion is ruled out. In localhost Chrome both CSS demos do animate. Working theory: on a 1440×900 screen a
+scene takes about 1,900px of scrolling to cross, against about 1,340px on a phone. A mouse wheel also moves
+in roughly 100px jumps, so a background drifting about 7px per click reads as part of the jump. The Loud
+settings and the status pill were added to settle this. Next: re-review with both.
+
 ### Frame rate, long tasks, CLS
 
 _Waiting for the Netlify deploy. No real-phone measurements yet._
@@ -363,7 +405,8 @@ site/
   vendor/           Motion and GSAP builds, with versions and licences in vendor/README.md
   shared/
     base.css        shared tokens and layout; nothing in it animates
-    hud-loader.js   loads the meter only when switched on
+    hud-loader.js   loads the meter only when switched on, and the status pill always
+    status.js       motion status pill (tooling: is this page's motion running?)
     hud.js          the performance meter
 tools/
   serve.mjs         dependency-free local server
