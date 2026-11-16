@@ -1,0 +1,69 @@
+/*
+  T5 · COLOUR BARS. Small script + CSS. Works in every browser.
+
+  Four full-width bars (red, orange, yellow, sky blue, top to bottom), each a quarter of the screen.
+  Leaving:  t5.js adds .t5-leave on link click. The bars rise from below the screen, growing taller
+            as they go, and settle into a solid cover. Then the browser navigates.
+  Arriving: a two-line script in <head> adds .t5-enter before first paint, but only if the previous
+            page set a "just covered" flag in the last few seconds. The new page therefore first
+            paints already covered, matching the old page's last frame: no flash between pages.
+            The bars then sweep upward and off the top, revealing the page.
+
+  The bars are pseudo-elements (html::before/::after, body::before/::after), so no markup is
+  needed and the arrival cover exists from the very first paint.
+  Animates transform only. The bars only exist while one of the two classes is on <html>; with no
+  script, no class, so no bars. Reduced motion: no bars at all, plain instant navigation.
+
+  Timing lives here AND in t5.js (COVER_MS). Keep them in step if you change it.
+*/
+:root {
+  --t5-ease: cubic-bezier(0.77, 0, 0.175, 1); /* slow start, fast middle, long soft landing */
+  --t5-dur: 600ms;
+  --t5-step: 40ms;  /* stagger between bars. Total cover = 600 + 3 × 40 = 720ms */
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :is(.t5-leave, .t5-enter)::before,
+  :is(.t5-leave, .t5-enter)::after,
+  :is(.t5-leave, .t5-enter) body::before,
+  :is(.t5-leave, .t5-enter) body::after {
+    content: "";
+    position: fixed;
+    left: 0; right: 0;
+    top: calc(var(--n) * 25%);
+    height: calc(25% + 1px); /* 1px overlap: no hairline gaps between bars when covered */
+    z-index: 2147483000;
+    pointer-events: none;
+    will-change: transform;
+  }
+  :is(.t5-leave, .t5-enter)::before      { --n: 0; background: #e5352b; } /* red */
+  :is(.t5-leave, .t5-enter)::after       { --n: 1; background: #f2862a; } /* orange */
+  :is(.t5-leave, .t5-enter) body::before { --n: 2; background: #f6c630; } /* yellow */
+  :is(.t5-leave, .t5-enter) body::after  { --n: 3; background: #57b7ee; } /* sky blue */
+
+  /* Cover: every bar starts just below the screen, a quarter of its height, and rises into its
+     slot while growing to full height. Red travels furthest in the same time, so it moves
+     fastest: that, plus the small delay, gives the staggered speeds. */
+  :is(.t5-leave)::before, :is(.t5-leave)::after,
+  .t5-leave body::before, .t5-leave body::after {
+    transform-origin: 50% 100%;
+    animation: t5-cover var(--t5-dur) var(--t5-ease) calc(var(--n) * var(--t5-step)) both;
+  }
+
+  /* Reveal: bars start covering and leave through the top, shrinking as they go. Red is
+     nearest the top, so it leaves first and slowest; sky blue sweeps the whole screen last. */
+  :is(.t5-enter)::before, :is(.t5-enter)::after,
+  .t5-enter body::before, .t5-enter body::after {
+    transform-origin: 50% 0%;
+    animation: t5-reveal var(--t5-dur) var(--t5-ease) calc(80ms + var(--n) * var(--t5-step)) both;
+  }
+}
+
+@keyframes t5-cover {
+  from { transform: translateY(calc((4 - var(--n)) * 100%)) scaleY(0.25); }
+  to   { transform: none; }
+}
+@keyframes t5-reveal {
+  from { transform: none; }
+  to   { transform: translateY(calc(-1 * (var(--n) + 1) * 100%)) scaleY(0.25); }
+}

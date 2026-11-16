@@ -52,7 +52,7 @@ Checked against MDN browser-compat-data and caniuse on the date above. Re-check 
 
 Firefox only recently shipped scroll-driven animations. Visitors on older browsers get the resting
 (static) state, which is complete by design. Without cross-document View Transitions, links simply
-change page instantly. Only T3 animates in Firefox today.
+change page instantly. Only T3 and T5 animate in Firefox today.
 
 ## Running it locally
 
@@ -150,6 +150,7 @@ Measure with the browser in the foreground. Background or hidden tabs are thrott
 | Transition T2 | shared element (header holds, image morphs) | cross-document View Transitions, CSS only | `site/transitions/t2/`, `t2.css` |
 | Transition T3 | fade out → fade in | small script + CSS | `site/transitions/t3/`, `t3.css`, `t3.js` |
 | Transition T4 | slide-over | cross-document View Transitions, CSS only | `site/transitions/t4/`, `t4.css` |
+| Transition T5 | colour bars: cover, load, reveal | small script + CSS | `site/transitions/t5/`, `t5.css`, `t5.js` |
 | Trap test | T3 + fade-in B + Back/Forward | self-checking pages | `site/transitions/trap/` |
 
 _More rows are added as each phase lands._
@@ -309,6 +310,30 @@ Notes:
 - **T4's direction doesn't reverse on Back.** Reversing needs a few lines of script (a `pagereveal`
   handler setting a view-transition type). Left out to keep it CSS-only.
 
+**T5 · Colour bars** (added 2026-11-15 at the designer's request; `t5.css`, `t5.js`, inline `<head>` script)
+- **What you see:** on click, four full-width bars (red, orange, yellow, sky blue, top to bottom) rise from
+  below the screen, growing from a quarter to full height. Each starts 40ms after the one above, and red has
+  the furthest to go in the same time, so their speeds differ. They form a solid cover (720ms). The browser
+  then navigates. The new page first paints already covered, and the bars sweep up and off the top, shrinking
+  as they go (80ms hold + 720ms). Easing is `cubic-bezier(0.77, 0, 0.175, 1)` both ways.
+- **How it stays seamless:** just before navigating, the old page sets a timestamp in `sessionStorage`. A
+  two-line inline script in the new page's `<head>` sees it (if under 10s old), clears it, and adds
+  `.t5-enter` before first paint. The browser keeps showing the covered old page until the new one paints,
+  so the cover never breaks.
+- **Bars are pseudo-elements** (`html::before/::after`, `body::before/::after`): no markup, and they exist from
+  the first paint. Transform only (`translateY` + `scaleY`). They exist only while `.t5-leave` or `.t5-enter`
+  is on `<html>`. No script means no class, so no bars.
+- **Traps handled:** `pageshow` removes the cover when Back restores the page from memory. A 4s safety net
+  uncovers the page if navigation never happens. The arrival class is removed after 1.5s, but the bars are
+  already parked offscreen by `animation-fill-mode: both`.
+- **Cost:** every navigation waits 720ms before the next page even starts loading (the next page is
+  prefetched at click to claw some of that back, in Chrome). About 1.5s of motion per click in total.
+  Back/Forward are plain instant changes, as in T3. 1.3 KB gzip of JavaScript, comments included.
+- **Reduced motion:** no bars, instant navigation. **Firefox:** works (no View Transitions needed).
+- Checked in localhost Chrome (2026-11-15), behaviour only: cover sequence, reveal sequence, Back-restore
+  simulation (cover cleared), no bars at rest. Not yet seen on a phone.
+- Timing lives in both `t5.css` and `t5.js` (`COVER_MS`). Keep them in step.
+
 **T3's trap, and the trap test.** Browsers keep recently left pages frozen in memory (the back/forward
 cache) and restore them exactly as left. For T3 that means faded to opacity 0. `t3.js` clears that on
 `pageshow`, which fires on every show, including restores. It also has a 4-second safety net that
@@ -355,6 +380,7 @@ build, desktop with throttling), or **localhost** (not a measurement).
 
 | transitions/t1, t2, t4 (all pages) | 0 | 0 | 0 | ok |
 | transitions/t3 (all pages) | 0 | 0.7 KB | 0.7 KB | ok |
+| transitions/t5 (all pages) | 0 | 1.3 KB | 1.3 KB | ok |
 | transitions/trap/a, b | 0 | 1.8 KB | 1.8 KB | ok (T3 + fade-in B) |
 
 All totals are far below the 100 KB page budget. Vendored library versions and licences are in `site/vendor/README.md`.
@@ -400,7 +426,7 @@ site/
   baseline.html     control page: same content, no motion
   fade/             fade-in demos: css.html (A), vanilla.html + vanilla.js (B)
   parallax/         parallax.css (shared scene, no motion) + css / vanilla / motion / gsap pages
-  transitions/      transitions.css (shared, no motion), t1–t4 styles + t3.js,
+  transitions/      transitions.css (shared, no motion), t1–t5 styles + t3.js, t5.js,
                     one folder per option (work.html, p1–p3.html), trap/ (self-checking trap test)
   vendor/           Motion and GSAP builds, with versions and licences in vendor/README.md
   shared/

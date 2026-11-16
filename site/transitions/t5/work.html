@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Work · T5 · Colour bars · animation-test</title>
+  <link rel="stylesheet" href="/shared/base.css">
+  <link rel="stylesheet" href="/transitions/transitions.css">
+  <link rel="stylesheet" href="/transitions/t5.css">
+  <script>/* T5 arrival: if the last page just covered itself, start covered (see t5.css). */try{var t=+sessionStorage.getItem("t5-covered");sessionStorage.removeItem("t5-covered");if(Date.now()-t<10000)document.documentElement.classList.add("t5-enter")}catch(e){}</script>
+  <script src="/transitions/t5.js" defer></script>
+  <script type="module" src="/shared/hud-loader.js" data-tooling></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap"><strong>Transitions</strong><span>T5 · Colour bars</span>
+      <nav><a href="/transitions/t5/work.html">Work</a><a href="/">All demos</a></nav></div>
+  </header>
+  <main class="wrap">
+    <section class="section">
+      <p class="eyebrow">Page transitions · T5 · Colour bars</p>
+      <h1>Selected work</h1>
+      <p class="lede">Open a project, then use the browser's Back button (or swipe back on a phone). Watch both directions.</p>
+      <div class="demo-notes">
+        <dl>
+          <dt>Effect</dt><dd>On click, four bars (red, orange, yellow, sky blue) rise from below and grow until they cover the screen (720ms). The new page loads underneath, then the bars sweep up and away (about 800ms).</dd>
+          <dt>Approach</dt><dd>A small script covers the page, then navigates; the reveal on the new page is a CSS animation that starts by itself. Transform only.</dd>
+          <dt>Feel</dt><dd>Bold and branded. Every navigation takes about 1.5 seconds plus loading time, and the next page only starts loading once you click (it's fetched while the bars cover).</dd>
+          <dt>Reduced motion</dt><dd>No bars: plain, instant navigation.</dd>
+          <dt>Works in</dt><dd>Every browser, including Firefox.</dd>
+          <dt>Back button</dt><dd>A plain, instant change (no bars). The page you return to must be fully visible, never left covered.</dd>
+        </dl>
+      </div>
+      <nav class="tx-options" aria-label="Transition options">
+        <a href="/transitions/t1/work.html">T1 · Crossfade</a>
+        <a href="/transitions/t2/work.html">T2 · Shared element</a>
+        <a href="/transitions/t3/work.html">T3 · Scripted fade</a>
+        <a href="/transitions/t4/work.html">T4 · Slide-over</a>
+        <a href="/transitions/t5/work.html" aria-current="page">T5 · Colour bars</a>
+      </nav>
+    </section>
+    <section class="section" aria-label="Projects">
+      <div class="tx-cards">
+        <a class="tx-card" href="/transitions/t5/p1.html">
+          <div class="plate tint-1 vt-p1">Project 1</div>
+          <h3>Wayfinding system</h3><p>Signage and maps for a transit hub.</p>
+        </a>
+        <a class="tx-card" href="/transitions/t5/p2.html">
+          <div class="plate tint-2 vt-p2">Project 2</div>
+          <h3>Banking onboarding</h3><p>From twelve steps to four.</p>
+        </a>
+        <a class="tx-card" href="/transitions/t5/p3.html">
+          <div class="plate tint-3 vt-p3">Project 3</div>
+          <h3>Field research app</h3><p>Offline-first notes for researchers.</p>
+        </a>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer"><div class="wrap">Page transitions · T5 · Colour bars</div></footer>
+</body>
+</html>

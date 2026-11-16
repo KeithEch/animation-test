@@ -40,8 +40,8 @@ if (kind) {
   const state = () => {
     if (kind === 'baseline') return ['grey', 'No motion on this page (control).'];
     if (kind === 'transition') {
-      const scripted = !!document.querySelector('script[src*="t3.js"]');
-      if (reduce.matches) return ['grey', `Reduce Motion is on: ${scripted ? 'no fade' : 'a short 150ms crossfade'} when you click a link.`];
+      const scripted = !!document.querySelector('script[src*="t3.js"], script[src*="t5.js"]');
+      if (reduce.matches) return ['grey', `Reduce Motion is on: ${scripted ? 'no animation' : 'a short 150ms crossfade'} when you click a link.`];
       if (scripted) return ['green', 'Transition ready: click a link (works in every browser).'];
       return 'PageRevealEvent' in window
         ? ['green', 'Transition ready: click a link to see it.']
@@ -61,7 +61,7 @@ if (kind) {
   const el = document.createElement('div');
   el.id = 'motion-status';
   el.setAttribute('role', 'status');
-  el.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:2147483646;max-width:calc(100vw - 16px);'
+  el.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:2147482000;max-width:calc(100vw - 16px);'
     + 'display:flex;gap:.5em;align-items:center;padding:.45em .8em;border-radius:999px;cursor:pointer;'
     + 'font:500 12px/1.3 system-ui,-apple-system,sans-serif;background:rgb(20 20 20 / .88);color:#fff;'
     + 'box-shadow:0 4px 14px rgb(0 0 0 / .2);-webkit-user-select:none;user-select:none';
